@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -20,17 +21,16 @@ namespace elk_logging_demo
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            var log = new LoggerConfiguration()
-                .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
-                .Enrich.FromLogContext()
-                .Enrich.WithExceptionDetails()
-                .WriteTo.Http("http://ldelk01.alephnet.net:9200")
-                //.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://ldelk01.alephnet.net:9200"))
-                //{
-                //    //IndexFormat = "test-index-{0:yyyy.MM}",
-                //    AutoRegisterTemplate = true
-                //})
-                .CreateLogger();
+            var telemetryConfig = TelemetryConfiguration.CreateDefault();
+            telemetryConfig.InstrumentationKey = Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
+            Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+                    .Enrich.FromLogContext()
+                    .Enrich.WithExceptionDetails()
+                    .WriteTo.Console()
+                    .WriteTo.Http(Configuration.GetValue<string>("Logging:LogstashUrl"))
+                    .WriteTo.ApplicationInsights(telemetryConfig, TelemetryConverter.Traces)
+                    .CreateLogger();
         }
 
         public IConfiguration Configuration { get; }
@@ -38,6 +38,7 @@ namespace elk_logging_demo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddApplicationInsightsTelemetry();
             services.AddControllers();
         }
 

@@ -4,15 +4,23 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>elk_logging_demo</RootNamespace>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <ApplicationInsightsResourceId>/subscriptions/2d316bdc-ae85-4c2c-b1c8-b22093f36423/resourcegroups/ApplicationInsightTest/providers/microsoft.insights/components/ApplicationInsight1</ApplicationInsightsResourceId>
+    <UserSecretsId>92e3c13e-157e-4f3f-bec4-f25dec5fe95e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
     <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
     <PackageReference Include="Serilog.Exceptions" Version="5.4.0" />
+    <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.ElasticSearch" Version="8.0.1" />
     <PackageReference Include="Serilog.Sinks.Http" Version="5.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
 
